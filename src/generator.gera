@@ -1,0 +1,31 @@
+
+mod json::generator
+
+use std::(iter::*, str::*)
+
+pub proc generate(value) {
+    case value {
+        #null -> return "null"
+        #bool b -> case b -> return "true" else return "false"
+        #string s -> return "\"" |> concat(s) |> concat("\"")
+        #number n -> return n |> as_str()
+        #array a -> return "["
+            |> concat(a
+                .> iter() 
+                |> map(generate) 
+                |> join(", ")
+            )
+            |> concat("]")
+        #object o -> return "{"
+            |> concat(o
+                .> iter() 
+                |> map(|e| "\""
+                    |> concat(e.key) 
+                    |> concat("\": ")
+                    |> concat(generate(e.value))
+                ) 
+                |> join(", ")
+            )
+            |> concat("}")
+    }
+}

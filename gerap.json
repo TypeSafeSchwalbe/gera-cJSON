@@ -1,0 +1,9 @@
+{
+    "name": "cJSON",
+    "description": "Bindings for cJSON, an ultralightweight JSON parser.",
+    "authors": ["TypeSafeSchwalbe"],
+    "target": "c",
+    "dependencies": [
+        "https://github.com/geralang/std"
+    ]
+}

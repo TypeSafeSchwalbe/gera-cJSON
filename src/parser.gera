@@ -1,0 +1,62 @@
+
+mod json::parser
+
+use std::arr::iter
+use std::str::fmt
+use std::math::min
+use std::if_else
+use std::coll::(Vector, HashMap)
+use std::iter::(map, for_each)
+
+val CJSON_NULL = 0
+val CJSON_BOOL = 1
+val CJSON_NUMBER = 2
+val CJSON_STRING = 3
+val CJSON_ARRAY = 4
+val CJSON_OBJECT = 5
+
+pub proc parse(s) {
+    val result = s |> cjson::parse()
+    case result.is_error -> {
+        val pos = result |> cjson::res_err_idx()
+        case pos == -1 -> {
+            return #err "Unable to parse input!"
+        }
+        val disp = s
+            |> substring(pos, min(pos + 5, length(s)))
+        val dots = pos + 5 < length(s)
+            |> if_else("...", "")
+        return #err "Unable to parse '__'!"
+            |> fmt([disp, dots])
+    }
+    return #ok result
+        |> cjson::res_val()
+        |> cjson_to_json()
+}
+
+proc cjson_to_json(v) {
+    case v.val_type {
+        CJSON_NULL -> return #null unit
+        CJSON_BOOL -> return #bool cjson::val_bool(v)
+        CJSON_NUMBER -> return #number cjson::val_number(v)
+        CJSON_STRING -> return #string cjson::val_string(v)
+        CJSON_ARRAY -> {
+            val items = Vector::new()
+            cjson::val_array(v) 
+                |> iter()
+                |> map(cjson_to_json) 
+                |> for_each(-> items .> push(it))
+            return #array items
+        }
+        CJSON_OBJECT -> {
+            val keys = cjson::val_obj_keys(v)
+            val vals = cjson::val_obj_vals(v)
+            val members = HashMap::new()
+            0..length(keys) |> for_each(|i| {
+                val value = vals[i] |> cjson_to_json()
+                members .> set(keys[i], value)
+            })
+            return #object members
+        }
+    } else return panic("unhandled value type!")
+}

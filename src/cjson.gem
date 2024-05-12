@@ -1,0 +1,22 @@
+
+type ParsingResult = {
+    is_error = bool
+    // ...
+}
+
+type CJSONVal = {
+    val_type = int
+    // ...
+}
+
+proc cjson::parse(str) -> ParsingResult = gera_cjson_parse
+
+proc cjson::res_err_idx(ParsingResult) -> int = gera_cjson_res_err_idx
+proc cjson::res_val(ParsingResult) -> CJSONVal = gera_cjson_res_val
+
+proc cjson::val_bool(CJSONVal) -> bool = gera_cjson_val_bool
+proc cjson::val_number(CJSONVal) -> float = gera_cjson_val_number
+proc cjson::val_string(CJSONVal) -> str = gera_cjson_val_string
+proc cjson::val_array(CJSONVal) -> [CJSONVal] = gera_cjson_val_array
+proc cjson::val_obj_keys(CJSONVal) -> [str] = gera_cjson_val_obj_keys
+proc cjson::val_obj_vals(CJSONVal) -> [CJSONVal] = gera_cjson_val_obj_vals

@@ -18,7 +18,7 @@ GeraObject cjson_to_gera_cjson(const cJSON* v);
 
 GeraObject gera_cjson_parse(GeraString input) {
     const char* parse_end = NULL;
-    const cJSON* parsed = cJSON_ParseWithLengthOpts(
+    cJSON* parsed = cJSON_ParseWithLengthOpts(
         input.data, input.length_bytes, &parse_end, 0
     );
     if(parsed == NULL) {
@@ -205,6 +205,7 @@ GeraObject cjson_to_gera_cjson(const cJSON* v) {
                 &free_gera_cjson_object_variant
             );
             GeraCJSONLayout* header = (GeraCJSONLayout*) obj_a->data;
+            header->val_type = GERA_CJSON_OBJECT;
             GeraCJSONObjectLayout* data = (GeraCJSONObjectLayout*) header->data;
             data->keys = (GeraArray) { .allocation = keys_a, .length = length };
             data->vals = (GeraArray) { .allocation = vals_a, .length = length };
